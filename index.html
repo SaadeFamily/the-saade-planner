@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Saade Planner — v3.2</title>
+<style>
+:root{
+  --ink:#2f2926; --muted:#6f625c; --line:#c4b5ad; --softline:#e2d8d2;
+  --paper:#fffdfb; --bg:#f7f1ed; --cream:#fff9f5; --accent:#dfc1b2;
+  --shadow:0 18px 55px rgba(92,69,57,.12);
+  --head:#f3efe8; --gridline:#ded2cc; --printline:#a9978f;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Avenir,Helvetica,Arial,sans-serif;}
+button,input,select{font-family:inherit}
+.app{max-width:1900px;margin:10px auto;padding:16px;background:var(--paper);box-shadow:var(--shadow);border:1px solid #eadfd8;border-radius:18px;}
+.cover{text-align:center;padding:8px 12px 6px;border-bottom:1px solid var(--softline);position:relative;}
+.title{font-family:Georgia,'Times New Roman',serif;font-size:36px;letter-spacing:.04em;font-weight:400;margin:0;color:#302a27;}
+.subtitle{margin:5px 0 0;color:var(--muted);font-size:12px;letter-spacing:.20em;text-transform:uppercase;font-weight:600}
+.tagline{font-size:11px;color:#766963;margin-top:5px;letter-spacing:.14em}
+.version{position:absolute;right:10px;bottom:8px;font-size:10px;color:#8f817b;letter-spacing:.12em}
+.controls{display:grid;grid-template-columns:95px 140px 110px minmax(190px,1fr) repeat(6,max-content);gap:7px;align-items:end;margin:10px 0 8px;padding:9px;border:1px solid var(--softline);border-radius:14px;background:#fffaf7}
+.control label,.quick label{display:block;font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px}.control select,.control input,.quick select,.quick input{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font-size:14px}.btn{border:1px solid var(--line);background:white;border-radius:10px;padding:9px 9px;cursor:pointer;color:var(--ink);white-space:nowrap;font-size:12.5px;min-width:0}.btn:hover{background:#fbf7f4}.btn.primary{background:#fff7f1}.btn.danger{color:#9f5b52}.quick{display:grid;grid-template-columns:120px 70px 70px 150px 110px 1fr auto;gap:9px;align-items:end;margin:0 0 12px;padding:12px 14px;border:1px solid var(--softline);border-radius:14px;background:#fffdfb}.legend{display:flex;gap:10px 14px;flex-wrap:wrap;justify-content:center;padding:7px 0 10px;font-size:12px;color:#3e3633;font-weight:700}.chip{display:inline-flex;align-items:center;gap:5px}.chip-name{font-weight:800}.dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.18)}.tools-note,.hint{font-size:11px;color:#9a8d87;text-align:center;margin:8px 0 10px}.months{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.month{border:1px solid var(--line);border-radius:12px;background:white;overflow:hidden;break-inside:avoid;transition:.15s box-shadow,.15s transform;scroll-margin-top:20px}.month:focus-within,.month.active{box-shadow:0 0 0 3px rgba(170,191,209,.25);transform:translateY(-1px)}.month-head{height:35px;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:16px;letter-spacing:.10em;text-transform:uppercase;border-bottom:1px solid var(--line);background:var(--head);color:#302a27;font-weight:600}.dow{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--line);background:var(--head)}.dow div{text-align:center;padding:5px 0;font-size:10px;letter-spacing:.14em;color:#453c38;font-weight:700;border-right:1px solid rgba(100,80,70,.20)}.dow div:last-child{border-right:none}.grid{display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(6,43px)}.day{position:relative;border-right:1px solid var(--gridline);border-bottom:1px solid var(--gridline);background:#fff;overflow:hidden}.day.single{background:var(--single-color,#fff)}.day:nth-child(7n){border-right:none}.date{position:absolute;top:4px;left:6px;font-size:12px;color:#3f3734;z-index:8;font-weight:700;text-shadow:0 1px 2px rgba(255,255,255,.75)}.empty{background:#fbf8f5}.bands{position:absolute;left:3px;right:3px;bottom:3px;top:18px;display:flex;flex-direction:column;gap:2px;border-radius:4px;overflow:hidden}.day.single .bands{display:none}.band{flex:1;min-height:3px}.plus{position:absolute;right:3px;top:2px;font-size:10px;font-weight:bold;color:#6c615c;z-index:5}.icons{position:absolute;right:3px;bottom:2px;font-size:9px;z-index:5;letter-spacing:-1px}.today .date{font-weight:bold;text-decoration:underline;text-underline-offset:2px}.events{border-top:1px solid var(--line);padding:7px 6px 6px;background:#fffdfb;min-height:152px}.events-head{display:grid;grid-template-columns:38px 92px 1fr 18px;gap:6px;font-size:8.5px;color:#6b5f59;text-transform:uppercase;letter-spacing:.10em;margin-bottom:2px;font-weight:700;border-bottom:1px solid #e1d6d0;padding-bottom:3px}.event-row{display:grid;grid-template-columns:38px 92px 1fr 18px;gap:6px;align-items:center;min-height:21px;border-bottom:1px solid #eee7e2;margin:0}.event-row input,.event-row select{height:20px;border:0;border-radius:0;background:transparent;font-size:10.5px;color:#2f2926;padding:1px 2px;outline:none}.event-row select.cat-select{background:linear-gradient(90deg,var(--cat-color,#fff) 0 4px,transparent 4px);padding-left:8px;font-weight:600}.event-row input.date-range{text-align:center;font-weight:600}.event-row input[type=number]{text-align:left}.event-row .remove{height:20px;border:0;background:transparent;color:#9d6f6a;cursor:pointer;font-size:13px}.add{width:100%;border:1px dashed #c8b9b1;background:#fff9f5;border-radius:8px;color:#6f625c;padding:6px;margin-top:4px;font-size:11px;cursor:pointer}.empty-note{font-size:11px;color:#8d817b;font-style:italic;text-align:center;padding:7px 0 4px}.footer{text-align:center;color:#a0928b;font-size:11px;margin-top:18px;letter-spacing:.12em}.fileInput{display:none}.print-preview .controls,.print-preview .quick,.print-preview .hint,.print-preview .add,.print-preview .remove,.print-preview .tools-note{display:none!important}.print-preview .app{box-shadow:none}.print-preview .event-row input,.print-preview .event-row select{border:0;background:transparent}.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#3f3734;color:white;padding:10px 14px;border-radius:999px;font-size:12px;opacity:0;pointer-events:none;transition:.2s;z-index:20}.toast.show{opacity:1}.month-summary{font-size:9px;color:#6f625c;text-align:center;padding:0 0 3px;margin-top:-1px;font-weight:600}
+.guide-modal{position:fixed;inset:0;background:rgba(63,55,52,.35);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}.guide-modal.show{display:flex}.guide-card{max-width:620px;background:#fffdfb;border:1px solid var(--line);border-radius:18px;padding:28px;box-shadow:0 25px 80px rgba(63,55,52,.22);color:var(--ink);position:relative}.guide-card h2{font-family:Georgia,serif;font-weight:400;margin:0 0 14px;font-size:26px}.guide-card p{font-size:14px;line-height:1.55;color:#625852}.guide-close{position:absolute;right:14px;top:10px;border:0;background:transparent;font-size:26px;color:#9b8b83;cursor:pointer}
+@media(max-width:1500px){.months{grid-template-columns:repeat(3,1fr)}.quick{grid-template-columns:130px 64px 64px 1fr 100px 1.4fr auto}.title{font-size:34px}.grid{grid-template-rows:repeat(6,46px)}}
+@media(max-width:1180px){.controls{grid-template-columns:repeat(6,1fr)}.controls .control:nth-child(1){grid-column:1/2}.controls .control:nth-child(2){grid-column:2/4}.controls .control:nth-child(3){grid-column:4/5}.controls .control:nth-child(4){grid-column:5/7}.controls .btn{font-size:12px;padding:8px 6px}}@media(max-width:1050px){.months{grid-template-columns:repeat(2,1fr)}.quick{grid-template-columns:1fr 70px 70px 1fr}.event-row,.events-head{display:grid;grid-template-columns:38px 92px 1fr 18px;gap:6px;font-size:8.5px;color:#6b5f59;text-transform:uppercase;letter-spacing:.10em;margin-bottom:2px;font-weight:700;border-bottom:1px solid #e1d6d0;padding-bottom:3px}}
+@media(max-width:680px){.app{margin:0;border-radius:0;padding:12px}.months{grid-template-columns:1fr}.controls,.quick{grid-template-columns:1fr}.title{font-size:31px}.version{position:static;margin-top:8px}.event-row,.events-head{display:grid;grid-template-columns:38px 92px 1fr 18px;gap:6px;font-size:8.5px;color:#6b5f59;text-transform:uppercase;letter-spacing:.10em;margin-bottom:2px;font-weight:700;border-bottom:1px solid #e1d6d0;padding-bottom:3px}.grid{grid-template-rows:repeat(6,42px)}.events{overflow-x:auto}.month{border-radius:10px}}
+@media print{body{background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}.app{max-width:none;margin:0;padding:6mm;box-shadow:none;border:0;background:white}.no-print,.quick,.controls,.hint,.tools-note{display:none!important}.cover{padding:2mm 0 3mm}.months{grid-template-columns:repeat(3,1fr);gap:6mm 5mm}.month{border:0.9pt solid var(--printline);border-radius:0;page-break-inside:avoid;break-inside:avoid;background:white}.month-head{height:8mm;font-size:10pt;border-bottom:0.8pt solid var(--printline)}.dow{border-bottom:0.7pt solid var(--printline)}.dow div{font-size:7pt;padding:1.4mm 0;border-right:0.5pt solid rgba(80,65,58,.24)}.grid{grid-template-rows:repeat(6,8mm)}.day{border-right:0.5pt solid #cfc3bc;border-bottom:0.5pt solid #cfc3bc}.date{font-size:7.5pt;top:1mm;left:1.5mm}.bands{top:4.5mm;left:1mm;right:1mm;bottom:1mm}.icons{font-size:6.5pt}.events{padding:1.6mm;min-height:22mm;border-top:0.8pt solid var(--printline);background:white}.event-row input,.event-row select{height:20px;border:0;border-radius:0;background:transparent;font-size:10.5px;color:#2f2926;padding:1px 2px;outline:none}.add,.remove,.empty-note{display:none}.title{font-size:24pt}.subtitle{font-size:8pt}.tagline{font-size:7pt}.legend{font-size:7.5pt;padding:2mm 0 3mm;gap:3mm}.dot{width:8px;height:8px}.events-head{display:grid;grid-template-columns:38px 92px 1fr 18px;gap:6px;font-size:8.5px;color:#6b5f59;text-transform:uppercase;letter-spacing:.10em;margin-bottom:2px;font-weight:700;border-bottom:1px solid #e1d6d0;padding-bottom:3px}.event-row{display:grid;grid-template-columns:38px 92px 1fr 18px;gap:6px;align-items:center;min-height:21px;border-bottom:1px solid #eee7e2;margin:0}.event-row input,.event-row select{height:20px;border:0;border-radius:0;background:transparent;font-size:10.5px;color:#2f2926;padding:1px 2px;outline:none}.footer{font-size:7pt;margin-top:3mm}@page{size:A3 landscape;margin:7mm}}
+.print-exit{position:fixed;right:18px;top:18px;z-index:99999;display:none;background:#302a27;color:#fff;border:0;border-radius:999px;padding:12px 18px;box-shadow:0 12px 30px rgba(0,0,0,.28);font-size:14px;font-weight:700;cursor:pointer}.print-preview .print-exit{display:block!important}.print-preview{padding-top:0}
+
+/* Version 2.0 refinements */
+.events{padding:6px 7px;background:#fffdfb;min-height:130px}
+.events-head{display:grid!important;grid-template-columns:42px 118px 1fr 18px!important;gap:6px!important;font-size:8px!important;color:#6b5f59!important;text-transform:uppercase!important;letter-spacing:.09em!important;margin:0 0 2px!important;font-weight:700!important;border-bottom:1px solid #e5dbd5!important;padding:0 0 3px!important}
+.event-row{display:grid!important;grid-template-columns:42px 118px 1fr 18px!important;gap:6px!important;align-items:center!important;min-height:21px!important;border-bottom:1px solid #eee7e2!important;margin:0!important;padding:1px 0!important}
+.event-row input,.event-row select{height:19px!important;border:0!important;border-radius:0!important;background:transparent!important;font-size:10.5px!important;color:#2f2926!important;padding:0 2px!important;outline:none!important}
+.event-row select.cat-select{background:linear-gradient(90deg,var(--cat-color,#fff) 0 4px,transparent 4px)!important;padding-left:8px!important;font-weight:600!important}
+.event-row input[aria-label="Date"]{font-weight:600!important;text-align:left!important}
+.event-row .remove{height:19px!important;border:0!important;background:transparent!important;color:#9d6f6a!important;cursor:pointer!important;font-size:13px!important;line-height:1!important}
+@media(max-width:1050px){.event-row,.events-head{grid-template-columns:42px 118px minmax(180px,1fr) 18px!important}}
+@media(max-width:680px){.event-row,.events-head{grid-template-columns:42px 118px minmax(180px,1fr) 18px!important}.events{overflow-x:auto}}
+@media print{.events-head{grid-template-columns:30px 82px 1fr 10px!important;font-size:6.5pt!important}.event-row{grid-template-columns:30px 82px 1fr 10px!important;min-height:14px!important;padding:0!important}.event-row input,.event-row select{height:13px!important;font-size:7pt!important}.event-row .remove{display:none!important}}
+
+
+
+/* Version 2.1 user refinements: tighter Date, readable Category, larger Event, hidden category arrow */
+.events-head{grid-template-columns:34px 154px minmax(0,1fr) 18px!important;gap:5px!important}
+.event-row{grid-template-columns:34px 154px minmax(0,1fr) 18px!important;gap:5px!important}
+.event-row input[aria-label="Date"]{width:34px!important;max-width:34px!important;text-align:left!important;font-weight:600!important;padding-left:1px!important;padding-right:1px!important}
+.event-row select.cat-select{
+  -webkit-appearance:none!important;
+  -moz-appearance:none!important;
+  appearance:none!important;
+  background:linear-gradient(90deg,var(--cat-color,#fff) 0 4px,transparent 4px)!important;
+  padding-left:8px!important;
+  padding-right:2px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+.event-row select.cat-select:focus{
+  outline:1px solid #d8cac2!important;
+  outline-offset:1px!important;
+}
+.event-row input[aria-label="Event"]{min-width:0!important;width:100%!important}
+@media(max-width:1050px){.events-head,.event-row{grid-template-columns:34px 150px minmax(0,1fr) 18px!important}}
+@media(max-width:680px){.events-head,.event-row{grid-template-columns:34px 145px minmax(0,1fr) 18px!important}}
+@media print{.events-head,.event-row{grid-template-columns:30px 128px minmax(0,1fr) 12px!important;gap:4px!important}.event-row input[aria-label="Date"]{width:30px!important;max-width:30px!important}.event-row select.cat-select{padding-left:7px!important}}
+
+
+
+/* Version 3.0: Quick labels and cleaner day bands */
+.quick{grid-template-columns:120px 62px 62px 145px 48px 98px minmax(260px,1fr) auto!important;gap:8px!important}
+.quick-show{display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.quick-show input{width:auto!important;height:18px;margin:7px 0 8px;accent-color:#6f625c}
+.bands{left:0!important;right:0!important;bottom:0!important;top:0!important;gap:0!important;border-radius:0!important}
+.band{min-height:2px!important;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.band:not(:last-child){border-bottom:1px solid rgba(255,255,255,.88)}
+
+.band-label{position:absolute;left:2px;right:2px;top:50%;transform:translateY(-50%);z-index:6;display:flex;align-items:center;justify-content:center;gap:2px;font-family:'Arial Narrow','Roboto Condensed','Inter Condensed','Avenir Next Condensed',Arial,sans-serif;font-size:10.5px;line-height:.95;font-stretch:condensed;font-weight:400;color:#2f2926;background:transparent;padding:0 2px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.05em;text-shadow:0 1px 1px rgba(255,255,255,.72)}
+.band-label-icon{font-size:1.22em;line-height:1;flex:0 0 auto;filter:drop-shadow(0 0 1px #1f1a18) drop-shadow(0 0 1.4px rgba(255,255,255,.95)) drop-shadow(0 1px 1px rgba(0,0,0,.35));text-shadow:0 0 1px #1f1a18,0 1px 1px rgba(255,255,255,.9)}
+.band-label-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.055em}
+.day-label{position:absolute;left:2px;right:2px;bottom:2px;z-index:7;display:flex;align-items:center;justify-content:center;gap:2px;font-family:'Arial Narrow','Roboto Condensed','Inter Condensed','Avenir Next Condensed',Arial,sans-serif;font-size:10.5px;line-height:.95;font-stretch:condensed;font-weight:400;color:#2f2926;background:transparent;border-radius:0;padding:0 2px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.05em;text-shadow:0 1px 1px rgba(255,255,255,.72)}
+.day-label-icon{font-size:1.25em;line-height:1;flex:0 0 auto;filter:drop-shadow(0 0 1px #1f1a18) drop-shadow(0 0 1.4px rgba(255,255,255,.95)) drop-shadow(0 1px 1px rgba(0,0,0,.35));text-shadow:0 0 1px #1f1a18,0 1px 1px rgba(255,255,255,.9)}
+.day-label-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.055em}
+.day.single.has-label .day-label{top:50%;bottom:auto;transform:translateY(-50%);font-size:10.5px;line-height:.95;padding:0 3px;color:#2f2926;text-shadow:0 1px 1px rgba(255,255,255,.76)}
+.day.single.has-label .day-label-icon{font-size:1.35em}
+@media(max-width:1500px){.quick{grid-template-columns:110px 58px 58px 130px 46px 90px minmax(220px,1fr) auto!important}}
+@media(max-width:1180px){.quick{grid-template-columns:1fr 64px 64px 1fr 50px 100px 1.4fr auto!important}}
+@media(max-width:680px){.quick{grid-template-columns:1fr!important}.quick-show{align-items:flex-start}.quick-show input{margin:0 0 8px}}
+@media print{.bands{left:0!important;right:0!important;bottom:0!important;top:0!important;gap:0!important;border-radius:0!important}.band:not(:last-child){border-bottom:.5pt solid rgba(255,255,255,.9)}.day-label{font-size:7pt;bottom:.6mm;left:.5mm;right:.5mm;padding:0 .4mm;border-radius:0;background:transparent!important;letter-spacing:-.055em}.day.single.has-label .day-label{font-size:7pt}.day-label-icon{font-size:1.25em}.band-label{font-size:7pt;left:.4mm;right:.4mm;letter-spacing:-.055em}.band-label-icon{font-size:1.22em}}
+
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <section class="cover">
+    <h1 class="title">The Saade Planner</h1>
+    <div class="subtitle" id="periodTitle">Academic Year 2026–2027</div>
+    <div class="tagline">Family • School • Travel • Celebrations</div>
+    <div class="version">Etsy Refined · Periods</div>
+  </section>
+  <section class="controls no-print">
+    <div class="control"><label>Year</label><input id="year" type="number" min="2020" max="2100" value="2026"></div>
+    <div class="control"><label>Starting Month</label><select id="startMonth"></select></div>
+    <div class="control"><label>Week Starts</label><select disabled><option>Monday</option></select></div>
+    <div class="control"><label>Jump to Month</label><select id="jumpMonth"></select></div>
+    <button class="btn" onclick="togglePrintPreview()">Print Mode</button>
+    <button class="btn" onclick="openGuide()">Guide</button>
+    <button class="btn" onclick="window.print()">Print / Save PDF</button>
+    <button class="btn" onclick="exportData()">Export Backup</button>
+    <button class="btn" onclick="document.getElementById('importFile').click()">Import</button>
+    <button class="btn danger" onclick="clearPlanner()">Clear</button>
+    <input class="fileInput" type="file" id="importFile" accept="application/json" />
+  </section>
+  <section class="quick no-print" aria-label="Quick Add">
+    <div><label>Quick Add Month</label><select id="quickMonth"></select></div>
+    <div><label>From</label><input id="quickFrom" type="number" min="1" max="31" placeholder="1"></div>
+    <div><label>To</label><input id="quickTo" type="number" min="1" max="31" placeholder="31"></div>
+    <div><label>Category</label><select id="quickCat"></select></div>
+    <div class="quick-show"><label>Show</label><input id="quickShow" type="checkbox" title="Show icon/label inside the calendar day"></div>
+    <div><label>Icon</label><select id="quickIcon"></select></div>
+    <div><label>Event</label><input id="quickText" type="text" placeholder="Valentina, Aspen, Labor Day"></div>
+    <button class="btn primary" onclick="quickAdd()">Add</button>
+  </section>
+  <div class="legend" id="legend"></div>
+  <div class="tools-note no-print">All changes save automatically in this browser. Use Export Backup before clearing browser data.</div>
+  <main class="months" id="months"></main>
+  <div class="hint no-print">Choose Date, Category and Icon under each month. Use 1-6 for a period. The calendar updates automatically and saves in this browser.</div>
+  <div class="footer">Designed for the Saade Family</div>
+</div>
+
+<div class="guide-modal no-print" id="guideModal" aria-hidden="true">
+  <div class="guide-card">
+    <button class="guide-close" onclick="closeGuide()">×</button>
+    <h2>The Saade Planner — Quick Guide</h2>
+    <p><strong>1.</strong> Choose <strong>Year</strong> and <strong>Starting Month</strong>. For the school year, choose August.</p>
+    <p><strong>2.</strong> Add events directly under each month using <strong>Date</strong>, <strong>Category</strong>, <strong>Icon</strong>, and <strong>Event</strong>. For a period, type <strong>1-6</strong> in the Date field.</p>
+    <p><strong>3.</strong> The calendar colors each day automatically: one event fills the whole day, two or three events create color bands, and four or more add a small +.</p>
+    <p><strong>4.</strong> Your planner saves automatically in this browser. Use <strong>Export Backup</strong> before clearing browser data or moving to another device.</p>
+    <p><strong>5.</strong> Use <strong>Print Mode</strong> and then <strong>Print / Save PDF</strong> for a clean A3-style printout.</p>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<button class="print-exit" onclick="togglePrintPreview()">Exit Print Mode</button>
+<script>
+const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const dows=['M','T','W','T','F','S','S'];
+const categories=[
+ {key:'Valentina',label:'Valentina',name:'Valentina',color:'#E85D8E'},
+ {key:'Antonella',label:'Antonella',name:'Antonella',color:'#E64B3C'},
+ {key:'Vanessa',label:'Vanessa',name:'Vanessa',color:'#23B5AF'},
+ {key:'Emerson',label:'Emerson',name:'Emerson',color:'#4E9F6E'},
+ {key:'Trips',label:'Trips & Events',name:'Trips & Events',color:'#7B61C8'},
+ {key:'Bishop',label:'Bishop Moore',name:'Bishop Moore',color:'#3F72AF'},
+ {key:'Brasil',label:'Brazil Holidays / JFES',name:'Brazil Holidays / JFES',color:'#FFC107'},
+ {key:'USA',label:'USA Holidays / No School',name:'USA Holidays / No School',color:'#D4A017'}
+];
+const icons=['🎂 Birthday','✈️ Travel','🏐 Volleyball','🏫 School','🩺 Doctor','❤️ Family','⚖️ JFES','🇺🇸 USA Holiday','🇧🇷 Brazil Holiday','🎓 College','🎉 Special Event','📌 Reminder'];
+const stateKey='saadePlannerStateV5';
+let state={year:2026,startMonth:7,events:{}};
+function load(){try{const s=JSON.parse(localStorage.getItem(stateKey)); if(s) state={...state,...s}; migratePeriods();}catch(e){}}
+function migratePeriods(){
+ Object.keys(state.events||{}).forEach(k=>{
+  const list=(state.events[k]||[]).filter(e=>e&&(e.day||e.cat||e.icon||e.text));
+  const withRanges=[], singles=[];
+  list.forEach(e=>{ if(e.to||e.end) withRanges.push({...e,to:e.to||e.end}); else singles.push(e); });
+  singles.sort((a,b)=>(Number(a.day)||0)-(Number(b.day)||0));
+  const used=new Set();
+  for(let i=0;i<singles.length;i++){
+   if(used.has(i)) continue;
+   const base=singles[i], days=[Number(base.day)||0]; used.add(i);
+   let last=days[0];
+   for(let j=i+1;j<singles.length;j++){
+    const e=singles[j], d=Number(e.day)||0;
+    if(!used.has(j)&&d===last+1&&e.cat===base.cat&&e.icon===base.icon&&e.text===base.text){days.push(d); used.add(j); last=d;}
+   }
+   withRanges.push({...base,day:String(days[0]||''),to:days.length>1?String(days[days.length-1]):''});
+  }
+  withRanges.sort((a,b)=>(Number(a.day)||0)-(Number(b.day)||0));
+  state.events[k]=withRanges;
+ });
+}
+function save(){localStorage.setItem(stateKey,JSON.stringify(state));}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600)}
+function catColor(key){return (categories.find(c=>c.key===key)||{}).color||'#ddd'}
+function iconOnly(v){return (v||'').split(' ')[0]||''}
+function keyFor(y,m){return `${y}-${String(m+1).padStart(2,'0')}`}
+function eventsFor(y,m){const k=keyFor(y,m); if(!state.events[k]) state.events[k]=[]; return state.events[k];}
+function startDay(e){return Math.max(1, Number(e.day)||0);}
+function endDay(e){return Math.max(startDay(e), Number(e.to)||Number(e.end)||Number(e.day)||0);}
+function rangeLabel(e){const a=startDay(e), b=endDay(e); if(!a) return ''; return b&&b!==a?`${a}–${b}`:String(a);}
+function parseRange(v,max){const s=String(v||'').trim().replace(/to/gi,'-').replace(/[–—]/g,'-'); const parts=s.split('-').map(x=>Number(x.trim())).filter(Boolean); let a=parts[0]||0, b=parts[1]||a; if(a<1||a>max||b<1||b>max||b<a) return null; return {day:String(a),to:b===a?'':String(b)};}
+function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
+function firstMondayIndex(y,m){return (new Date(y,m,1).getDay()+6)%7;}
+function monthYear(slot){const m=(state.startMonth+slot)%12; const y=state.year + Math.floor((state.startMonth+slot)/12); return {m,y};}
+function optionHTML(items,selected,type){let html='<option value=""></option>'; items.forEach(it=>{let v=type==='cat'?it.key:it; let label=type==='cat'?it.label:it; html+=`<option value="${v}" ${v===selected?'selected':''}>${label}</option>`}); return html;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function updatePeriod(){const end=monthYear(11); document.getElementById('periodTitle').textContent=state.startMonth===0?`Calendar Year ${state.year}`:`Academic Year ${state.year}–${end.y}`;}
+function headerColor(slot){return getComputedStyle(document.documentElement).getPropertyValue('--head') || '#ead2c5'}
+function initControls(){
+ const sm=document.getElementById('startMonth'), jm=document.getElementById('jumpMonth'), qm=document.getElementById('quickMonth');
+ [sm,jm,qm].forEach(sel=>sel.innerHTML='');
+ monthNames.forEach((m,i)=>{sm.add(new Option(m,i));});
+ for(let slot=0;slot<12;slot++){const {m,y}=monthYear(slot); jm.add(new Option(`${monthNames[m]} ${y}`,slot)); qm.add(new Option(`${monthNames[m]} ${y}`,slot));}
+ document.getElementById('year').value=state.year; sm.value=state.startMonth;
+ document.getElementById('year').onchange=e=>{state.year=Number(e.target.value)||2026; save(); render();};
+ sm.onchange=e=>{state.startMonth=Number(e.target.value); save(); render();};
+ jm.onchange=e=>{const {m,y}=monthYear(Number(e.target.value));document.querySelector(`[data-key="${keyFor(y,m)}"]`)?.scrollIntoView({block:'start'});};
+ const qc=document.getElementById('quickCat'), qi=document.getElementById('quickIcon'); qc.innerHTML=optionHTML(categories,'','cat'); qi.innerHTML=optionHTML(icons,'','icon');
+ document.getElementById('legend').innerHTML=categories.map(c=>`<span class="chip"><span class="dot" style="background:${c.color}"></span><span class="chip-name" style="color:${c.color}">${c.name}</span></span>`).join('');
+ document.getElementById('importFile').addEventListener('change', importData);
+}
+function render(){ updatePeriod(); initControls(); const container=document.getElementById('months'); container.innerHTML=''; for(let slot=0;slot<12;slot++){const {m,y}=monthYear(slot); container.appendChild(monthBlock(y,m,slot));} save();}
+function monthBlock(y,m,slot){
+ const wrap=document.createElement('section'); wrap.className='month'; wrap.dataset.key=keyFor(y,m);
+ const hc=headerColor(slot); const head=document.createElement('div'); head.className='month-head'; head.style.background=hc; head.textContent=`${monthNames[m]} ${y}`; wrap.appendChild(head);
+ const dow=document.createElement('div'); dow.className='dow'; dow.style.background=hc; dows.forEach(d=>{const el=document.createElement('div'); el.textContent=d; dow.appendChild(el)}); wrap.appendChild(dow);
+ const grid=document.createElement('div'); grid.className='grid'; const start=firstMondayIndex(y,m), total=daysInMonth(y,m), list=eventsFor(y,m), now=new Date();
+ for(let cell=0;cell<42;cell++){
+  const day=cell-start+1; const d=document.createElement('div'); d.className='day';
+  if(day<1||day>total){d.classList.add('empty')} else {
+   if(now.getFullYear()===y&&now.getMonth()===m&&now.getDate()===day)d.classList.add('today');
+   d.innerHTML=`<span class="date">${day}</span>`; const evs=list.filter(e=>e.cat && day>=startDay(e) && day<=endDay(e));
+   if(evs.length){
+    if(evs.length===1){d.classList.add('single');d.style.setProperty('--single-color',catColor(evs[0].cat));}
+    const bands=document.createElement('div');bands.className='bands';evs.slice(0,4).forEach(e=>{const b=document.createElement('div');b.className='band';b.style.background=catColor(e.cat); if(evs.length>1 && e.showCal && Number(startDay(e))===day && (e.text || e.label || e.icon)){const bl=document.createElement('div');bl.className='band-label'; const ico=iconOnly(e.icon); const txt=(e.text || e.label || '').trim(); if(ico){const ispan=document.createElement('span');ispan.className='band-label-icon';ispan.textContent=ico;bl.appendChild(ispan);} if(txt){const tspan=document.createElement('span');tspan.className='band-label-text';tspan.textContent=txt;bl.appendChild(tspan);} b.appendChild(bl);} bands.appendChild(b)});d.appendChild(bands);
+    const labeled=evs.length===1 ? evs.find(e=>e.showCal && Number(startDay(e))===day && (e.text || e.label || e.icon)) : null;
+    if(labeled){d.classList.add('has-label'); const lab=document.createElement('div');lab.className='day-label'; const ico=iconOnly(labeled.icon); const txt=(labeled.text || labeled.label || '').trim(); if(ico){const ispan=document.createElement('span');ispan.className='day-label-icon';ispan.textContent=ico;lab.appendChild(ispan);} if(txt){const tspan=document.createElement('span');tspan.className='day-label-text';tspan.textContent=txt;lab.appendChild(tspan);} d.appendChild(lab)}
+    if(evs.length>4){const p=document.createElement('div');p.className='plus';p.textContent='+';d.appendChild(p)}
+   }
+  }
+  grid.appendChild(d);
+ }
+ wrap.appendChild(grid); wrap.appendChild(eventsArea(y,m)); return wrap;
+}
+function eventsArea(y,m){
+ const area=document.createElement('div'); area.className='events'; const list=eventsFor(y,m);
+ area.innerHTML='<div class="events-head"><span>Date</span><span>Category</span><span>Event</span><span></span></div>';
+ if(list.length===0){const empty=document.createElement('div'); empty.className='empty-note'; empty.textContent='No events yet'; area.appendChild(empty);} else {const count=list.filter(e=>e.day||e.cat||e.icon||e.text).length; const s=document.createElement('div'); s.className='month-summary'; s.textContent=count===1?'1 event':`${count} events`; area.appendChild(s);}
+ list.map((ev,idx)=>({ev,idx})).sort((a,b)=>{const ad=Number(a.ev.day)||999; const bd=Number(b.ev.day)||999; return ad-bd || a.idx-b.idx;}).forEach(({ev,idx})=>area.appendChild(eventRow(y,m,idx,ev)));
+ const add=document.createElement('button'); add.className='add no-print'; add.textContent='+ Add event'; add.onclick=()=>{eventsFor(y,m).push({day:'',to:'',cat:'',icon:'',label:'',showCal:false,text:''}); render(); setTimeout(()=>{const mEl=document.querySelector(`[data-key="${keyFor(y,m)}"]`); const rows=mEl?.querySelectorAll('.event-row'); rows?.[rows.length-1]?.querySelector('input')?.focus(); mEl?.classList.add('active');},0)}; area.appendChild(add); return area;
+}
+function eventRow(y,m,idx,ev){
+ const row=document.createElement('div'); row.className='event-row'; row.style.setProperty('--cat-color',ev.cat?catColor(ev.cat):'#fff'); const max=daysInMonth(y,m);
+ const displayDate = ev.to && ev.to!==ev.day ? `${esc(ev.day)}–${esc(ev.to)}` : esc(ev.day||'');
+ row.innerHTML=`<input type="text" value="${displayDate}" placeholder="" aria-label="Date"><select class="cat-select" aria-label="Category">${optionHTML(categories,ev.cat,'cat')}</select><input type="text" value="${esc(ev.text)}" placeholder="Event" aria-label="Event"><button class="remove no-print" title="Remove">×</button>`;
+ const [date,cat,text,remove]=row.children; const activate=()=>document.querySelector(`[data-key="${keyFor(y,m)}"]`)?.classList.add('active');
+ function parseDateRange(v){ const raw=String(v||'').trim().replace(/—/g,'-').replace(/–/g,'-'); if(!raw) return {day:'',to:''}; const parts=raw.split('-').map(x=>x.trim()).filter(Boolean); return {day:parts[0]||'',to:parts[1]||parts[0]||''}; }
+ function store(rerender=false){const r=parseDateRange(date.value); eventsFor(y,m)[idx]={day:r.day,to:r.to,cat:cat.value,icon:ev.icon||'',label:ev.label||'',showCal:!!ev.showCal,text:text.value}; save(); if(rerender) render();}
+ [date,cat,text].forEach(el=>el.addEventListener('focus',activate));
+ date.addEventListener('change',()=>store(true)); cat.addEventListener('change',()=>store(true)); text.addEventListener('input',()=>store(false)); text.addEventListener('change',()=>store(true));
+ remove.onclick=()=>{eventsFor(y,m).splice(idx,1); render();}; return row;
+}
+function quickAdd(){
+ const slot=Number(document.getElementById('quickMonth').value||0); const {m,y}=monthYear(slot);
+ const fromEl=document.getElementById('quickFrom'), toEl=document.getElementById('quickTo');
+ const from=Number(fromEl.value), to=Number(toEl.value||fromEl.value);
+ const cat=document.getElementById('quickCat').value; const icon=document.getElementById('quickIcon').value;
+ const text=document.getElementById('quickText').value;
+ const showCal=document.getElementById('quickShow').checked && (!!text || !!icon);
+ const max=daysInMonth(y,m);
+ if(!from||!cat||!text){toast('Add from day, category and event.'); return;}
+ if(from<1||from>max||to<1||to>max||to<from){toast('Check From / To dates.'); return;}
+ eventsFor(y,m).push({day:String(from),to:to===from?'':String(to),cat,icon,label:'',showCal,text});
+ fromEl.value=''; toEl.value=''; document.getElementById('quickText').value=''; save(); render(); toast(from===to?'Event added.':'Period added.');
+}
+function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='the-saade-planner-backup.json'; a.click(); URL.revokeObjectURL(a.href);}
+function importData(e){const file=e.target.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=()=>{try{const data=JSON.parse(reader.result); if(data&&data.events){state={...state,...data}; save(); render(); toast('Backup imported.');}}catch(err){alert('Could not import this file.');}}; reader.readAsText(file); e.target.value='';}
+function togglePrintPreview(){document.body.classList.toggle('print-preview'); toast(document.body.classList.contains('print-preview')?'Print Mode on':'Print Mode off');}
+function clearPlanner(){if(confirm('Clear all events from The Saade Planner? Export a backup first if you want to save them.')){state.events={}; save(); render(); toast('Planner cleared.');}}
+
+function openGuide(){document.getElementById('guideModal').classList.add('show');}
+function closeGuide(){document.getElementById('guideModal').classList.remove('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){ if(document.body.classList.contains('print-preview')) togglePrintPreview(); else closeGuide(); }});
+load(); initControls(); render();
+</script>
+</body>
+</html>
